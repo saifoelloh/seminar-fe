@@ -11,8 +11,8 @@ import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import navigation from 'menu-items';
-import { drawerWidth } from 'store/constant';
-import { SET_MENU } from 'store/actions';
+import { drawerWidth } from 'redux/constant';
+import { SET_MENU } from 'redux/types';
 
 // assets
 import { IconChevronRight } from '@tabler/icons';

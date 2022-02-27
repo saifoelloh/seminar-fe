@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router';
+import * as PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -12,15 +15,15 @@ import { Formik } from 'formik';
 import useScriptRef from 'hooks/useScriptRef';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import fetchAPI from 'utils/fetchAPI';
+import { currentUserUpdate } from 'redux/actions/current-user';
 
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useNavigate } from 'react-router';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
-const FirebaseLogin = ({ ...others }) => {
+const FirebaseLogin = ({ currentUserUpdate, ...others }) => {
     const navigate = useNavigate();
     const theme = useTheme();
     const scriptedRef = useScriptRef();
@@ -38,8 +41,9 @@ const FirebaseLogin = ({ ...others }) => {
         const { email, password } = values;
         try {
             const result = await fetchAPI('POST', { path: '/users/login', data: { email, password } });
-            console.log({ result });
-            navigate('/dashboard/default');
+            const { id, name } = result;
+            currentUserUpdate({ id, name, email: result.email });
+            navigate('/');
             if (scriptedRef.current) {
                 setStatus({ success: true });
                 setSubmitting(false);
@@ -152,4 +156,8 @@ const FirebaseLogin = ({ ...others }) => {
     );
 };
 
-export default FirebaseLogin;
+FirebaseLogin.propTypes = {
+    currentUserUpdate: PropTypes.func.isRequired
+};
+
+export default connect(null, { currentUserUpdate })(FirebaseLogin);
