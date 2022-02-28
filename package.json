@@ -1,8 +1,7 @@
 {
-    "name": "berry-material-react-free",
+    "name": "seminar-fe",
     "version": "3.0.1",
     "private": true,
-    "homepage": "https://berrydashboard.io/free",
     "dependencies": {
         "@emotion/cache": "^11.4.0",
         "@emotion/react": "^11.4.0",
@@ -21,9 +20,11 @@
         "apexcharts": "^3.26.1",
         "axios": "^0.26.0",
         "clsx": "^1.1.1",
+        "cuid": "^2.1.8",
         "formik": "^2.2.6",
         "framer-motion": "^4.1.13",
         "history": "^5.0.0",
+        "lodash": "^4.17.21",
         "material-ui-popup-state": "^1.8.0",
         "prop-types": "^15.7.2",
         "react": "^17.0.2",
