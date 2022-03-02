@@ -33,10 +33,11 @@ import User1 from 'assets/images/users/user-round.svg';
 
 // assets
 import { IconLogout, IconSettings, IconUser } from '@tabler/icons';
+import { logoutUser as _logoutUser } from 'redux/actions/current-user';
 
 // ==============================|| PROFILE MENU ||============================== //
 
-const ProfileSection = ({ currentUser }) => {
+const ProfileSection = ({ currentUser, logoutUser }) => {
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
   const navigate = useNavigate();
@@ -48,7 +49,8 @@ const ProfileSection = ({ currentUser }) => {
    * */
   const anchorRef = useRef(null);
   const handleLogout = async () => {
-    console.log('Logout');
+    await logoutUser();
+    navigate('/login', { replace: true });
   };
 
   const handleClose = (event) => {
@@ -238,11 +240,16 @@ const ProfileSection = ({ currentUser }) => {
 };
 
 ProfileSection.propTypes = {
-  currentUser: PropTypes.object
+  currentUser: PropTypes.object,
+  logoutUser: PropTypes.func
 };
 
-ProfileSection.defaultProps = {
-  currentUser: { id: '', name: 'John Doe' }
-};
+const mapStateToProps = (state) => ({
+  currentUser: state.currentUser
+});
 
-export default connect((state) => ({ currentUser: state.currentUser }))(ProfileSection);
+const mapActionToProps = (dispatch) => ({
+  logoutUser: () => dispatch(_logoutUser())
+});
+
+export default connect(mapStateToProps, mapActionToProps)(ProfileSection);

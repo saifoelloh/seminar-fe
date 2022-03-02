@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import * as _ from 'lodash';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 
 // project imports
 import LogoSection from '../LogoSection';
@@ -12,8 +14,9 @@ import ProfileSection from './ProfileSection';
 
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
-const Header = ({ handleLeftDrawerToggle }) => {
+const Header = ({ currentUser }) => {
   const theme = useTheme();
+  const isUserEmpty = _.isEmpty(currentUser);
 
   return (
     <>
@@ -37,13 +40,19 @@ const Header = ({ handleLeftDrawerToggle }) => {
       <Box sx={{ flexGrow: 1 }} />
 
       {/* notification & profile */}
-      <ProfileSection />
+      {isUserEmpty ? (
+        <Button component={Link} to="/login" disableElevation variant="contained" color="secondary">
+          Sign In
+        </Button>
+      ) : (
+        <ProfileSection />
+      )}
     </>
   );
 };
 
 Header.propTypes = {
-  handleLeftDrawerToggle: PropTypes.func
+  currentUser: PropTypes.object
 };
 
 export default Header;

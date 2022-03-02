@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
+import * as _ from 'lodash';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -13,6 +14,7 @@ import Header from './Header';
 import navigation from 'menu-items';
 import { drawerWidth } from 'redux/constant';
 import { SET_MENU } from 'redux/types';
+import { checkUser as _checkUser } from 'redux/actions/current-user';
 
 // assets
 import { IconChevronRight } from '@tabler/icons';
@@ -63,20 +65,25 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
-const MainLayout = ({ currentUser }) => {
+const MainLayout = ({ currentUser, checkUser }) => {
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'));
+  const [isLoading, setLoading] = useState(true);
 
   // Handle left drawer
   const leftDrawerOpened = useSelector((state) => state.customization.opened);
   const dispatch = useDispatch();
-  const handleLeftDrawerToggle = () => {
-    dispatch({ type: SET_MENU, opened: !leftDrawerOpened });
+
+  const checkingUser = async () => {
+    if (_.isEmpty(currentUser)) {
+      await checkUser();
+    }
+    setLoading(false);
   };
 
-  if (currentUser === null) {
-    console.log({ currentUser });
-  }
+  useEffect(() => {
+    checkingUser();
+  }, []);
 
   useEffect(() => {
     dispatch({ type: SET_MENU, opened: !matchDownMd });
@@ -85,41 +92,45 @@ const MainLayout = ({ currentUser }) => {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      {/* header */}
-      <AppBar
-        enableColorOnDark
-        position="fixed"
-        color="inherit"
-        elevation={0}
-        sx={{
-          bgcolor: theme.palette.background.default,
-          transition: leftDrawerOpened ? theme.transitions.create('width') : 'none'
-        }}
-      >
-        <Toolbar>
-          <Header handleLeftDrawerToggle={handleLeftDrawerToggle} />
-        </Toolbar>
-      </AppBar>
+      {isLoading ? null : (
+        <>
+          <CssBaseline />
+          {/* header */}
+          <AppBar
+            enableColorOnDark
+            position="fixed"
+            color="inherit"
+            elevation={0}
+            sx={{
+              bgcolor: theme.palette.background.default,
+              transition: leftDrawerOpened ? theme.transitions.create('width') : 'none'
+            }}
+          >
+            <Toolbar>
+              <Header currentUser={currentUser} />
+            </Toolbar>
+          </AppBar>
 
-      {/* drawer */}
-
-      {/* main content */}
-      <Main theme={theme} open={leftDrawerOpened}>
-        {/* breadcrumb */}
-        <Breadcrumbs separator={IconChevronRight} navigation={navigation} icon title rightAlign />
-        <Outlet />
-      </Main>
+          {/* main content */}
+          <Main theme={theme} open={leftDrawerOpened}>
+            {/* breadcrumb */}
+            <Breadcrumbs separator={IconChevronRight} navigation={navigation} icon title rightAlign />
+            <Outlet />
+          </Main>
+        </>
+      )}
     </Box>
   );
 };
 
 MainLayout.propTypes = {
-  currentUser: PropTypes.object
+  currentUser: PropTypes.object,
+  checkUser: PropTypes.func
 };
 
-MainLayout.defaultProps = {
-  currentUser: null
-};
+const mapStateToProps = (state) => ({ currentUser: state.currentUser });
+const mapActionsToProps = (dispatch) => ({
+  checkUser: () => dispatch(_checkUser())
+});
 
-export default connect((state) => ({ currentUser: state.currentUser }))(MainLayout);
+export default connect(mapStateToProps, mapActionsToProps)(MainLayout);
