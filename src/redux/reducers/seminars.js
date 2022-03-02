@@ -1,8 +1,8 @@
-import { CURRENT_USER_UPDATE } from 'redux/types';
+import { SEMINAR_UPDATE } from 'redux/types';
 
 export default (state = null, action) => {
   switch (action.type) {
-    case CURRENT_USER_UPDATE:
+    case SEMINAR_UPDATE:
       return action.payload;
     default:
       return state;
