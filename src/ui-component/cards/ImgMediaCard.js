@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router';
 import { enrollSeminar as _enrollSeminar, findAllSeminar as _findAllSeminar } from 'redux/actions/seminars';
 
 function ImgMediaCard({ seminar, currentUser, enrollSeminar, findAllSeminar }) {
-  const { id, title, description } = seminar;
+  const { id, title, description, quota } = seminar;
   const navigate = useNavigate();
 
   const goTo = async () => {
@@ -33,14 +33,14 @@ function ImgMediaCard({ seminar, currentUser, enrollSeminar, findAllSeminar }) {
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div" style={{ textTransform: 'capitalize' }}>
-          {title}
+          {title} [{seminar.attendance.length}/{quota}]
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {description}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button fullWidth size="small" onClick={goTo} variant="contained">
+        <Button disabled={seminar.attendance.length === quota} fullWidth size="small" onClick={goTo} variant="contained">
           Enroll
         </Button>
       </CardActions>
