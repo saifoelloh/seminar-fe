@@ -15,16 +15,15 @@ import { Formik } from 'formik';
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import fetchAPI from 'utils/fetchAPI';
-import { currentUserUpdate } from 'redux/actions/current-user';
+import { currentUserUpdate as _currentUserUpdate } from 'redux/actions/current-user';
 
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import currentUser from 'redux/reducers/current-user';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
-const FirebaseLogin = ({ currentUserUpdate, ...others }) => {
+const FirebaseLogin = ({ currentUser, currentUserUpdate, ...others }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -42,7 +41,7 @@ const FirebaseLogin = ({ currentUserUpdate, ...others }) => {
     if (!_.isEmpty(currentUser)) {
       navigate('/');
     }
-  }, [navigate]);
+  }, []);
 
   const handleSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
     const { email, password } = values;
@@ -150,7 +149,16 @@ const FirebaseLogin = ({ currentUserUpdate, ...others }) => {
 };
 
 FirebaseLogin.propTypes = {
-  currentUserUpdate: PropTypes.func.isRequired
+  currentUser: PropTypes.object,
+  currentUserUpdate: PropTypes.func
 };
 
-export default connect(null, { currentUserUpdate })(FirebaseLogin);
+const mapStateToProps = (state) => ({
+  currentUser: state.currentUser
+});
+
+const mapActionToProps = (dispatch) => ({
+  currentUserUpdate: (data) => dispatch(_currentUserUpdate(data))
+});
+
+export default connect(mapStateToProps, mapActionToProps)(FirebaseLogin);
