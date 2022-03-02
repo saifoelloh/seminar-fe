@@ -18,6 +18,7 @@ import { checkUser as _checkUser } from 'redux/actions/current-user';
 
 // assets
 import { IconChevronRight } from '@tabler/icons';
+import Sidebar from './Sidebar';
 
 // styles
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
@@ -65,7 +66,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
-const MainLayout = ({ currentUser, checkUser }) => {
+const MainLayout = ({ currentUser, checkUser, toggleSideBar }) => {
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'));
   const [isLoading, setLoading] = useState(true);
@@ -80,6 +81,10 @@ const MainLayout = ({ currentUser, checkUser }) => {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    console.log({ leftDrawerOpened });
+  }, [leftDrawerOpened]);
 
   useEffect(() => {
     checkingUser();
@@ -107,9 +112,12 @@ const MainLayout = ({ currentUser, checkUser }) => {
             }}
           >
             <Toolbar>
-              <Header currentUser={currentUser} />
+              <Header currentUser={currentUser} handleLeftDrawerToggle={() => toggleSideBar(leftDrawerOpened)} />
             </Toolbar>
           </AppBar>
+
+          {/* drawer */}
+          <Sidebar drawerOpen={leftDrawerOpened} drawerToggle={() => toggleSideBar(leftDrawerOpened)} />
 
           {/* main content */}
           <Main theme={theme} open={leftDrawerOpened}>
@@ -125,12 +133,14 @@ const MainLayout = ({ currentUser, checkUser }) => {
 
 MainLayout.propTypes = {
   currentUser: PropTypes.object,
-  checkUser: PropTypes.func
+  checkUser: PropTypes.func,
+  toggleSideBar: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({ currentUser: state.currentUser });
 const mapActionsToProps = (dispatch) => ({
-  checkUser: () => dispatch(_checkUser())
+  checkUser: () => dispatch(_checkUser()),
+  toggleSideBar: (val) => dispatch({ type: SET_MENU, opened: !val })
 });
 
 export default connect(mapStateToProps, mapActionsToProps)(MainLayout);
