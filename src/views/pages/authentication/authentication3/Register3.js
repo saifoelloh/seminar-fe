@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as PropTypes from 'prop-types';
+import * as _ from 'lodash';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -24,10 +25,10 @@ const Register = ({ currentUser }) => {
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
 
   React.useEffect(() => {
-    if (currentUser !== null) {
+    if (!_.isEmpty(currentUser)) {
       navigate('/');
     }
-  }, [currentUser, navigate]);
+  }, []);
 
   return (
     <AuthWrapper1>
@@ -84,10 +85,6 @@ const Register = ({ currentUser }) => {
 
 Register.propTypes = {
   currentUser: PropTypes.object
-};
-
-Register.defaultProps = {
-  currentUser: null
 };
 
 export default connect((state) => ({ currentUser: state.currentUser }))(Register);

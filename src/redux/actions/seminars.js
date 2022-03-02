@@ -3,7 +3,7 @@ import { SEMINAR_UPDATE } from 'redux/types';
 import { currentUserUpdate } from './current-user';
 
 const path = '/seminars';
-const defaultPagination = { page: 0, show: 6, orderBy: 'createdAt', sortBy: 'DESC' };
+export const defaultPagination = { page: 0, show: 6, orderBy: 'createdAt', sortBy: 'DESC' };
 
 export const updateSeminar = (payload) => ({
   type: SEMINAR_UPDATE,
@@ -47,6 +47,7 @@ export const enrollSeminar = (id, userId) => async (dispatch) => {
     await dispatch(findAllSeminar(defaultPagination, {}, userId));
     return data;
   } catch (error) {
+    console.log({ error });
     if (error.message === 'Unauthorized') {
       dispatch(currentUserUpdate(null));
     }

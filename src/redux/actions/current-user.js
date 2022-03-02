@@ -22,5 +22,6 @@ export const logoutUser = () => async (dispatch) => {
     dispatch(currentUserUpdate(null));
   } catch (error) {
     console.log({ error });
+    dispatch(currentUserUpdate(null));
   }
 };

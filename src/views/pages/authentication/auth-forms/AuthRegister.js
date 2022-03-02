@@ -59,9 +59,9 @@ const FirebaseRegister = ({ currentUser, ...others }) => {
     const { name, email, password } = values;
     try {
       await fetchAPI('POST', { path: '/users', data: { name, email, password } });
-      navigate('/login');
       setStatus({ success: true });
       setSubmitting(false);
+      navigate('/login');
     } catch (err) {
       console.error(err);
       setStatus({ success: false });
@@ -209,4 +209,6 @@ FirebaseRegister.propTypes = {
   currentUser: PropTypes.object
 };
 
-export default connect((state) => ({ currentUser: state.currentUser }))(FirebaseRegister);
+const mapStateToProps = (state) => ({ currentUser: state.currentUser });
+
+export default connect(mapStateToProps)(FirebaseRegister);
