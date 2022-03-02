@@ -1,8 +1,8 @@
 // assets
-import { IconDashboard } from '@tabler/icons';
+import { IconDashboard, IconSpeakerphone } from '@tabler/icons';
 
 // constant
-const icons = { IconDashboard };
+const icons = { IconDashboard, IconSpeakerphone };
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
@@ -15,8 +15,16 @@ const dashboard = {
       id: 'default',
       title: 'Dashboard',
       type: 'item',
-      url: '/dashboard/default',
+      url: '/',
       icon: icons.IconDashboard,
+      breadcrumbs: false
+    },
+    {
+      id: 'seminar',
+      title: 'Seminar',
+      type: 'item',
+      url: '/seminar',
+      icon: icons.IconSpeakerphone,
       breadcrumbs: false
     }
   ]

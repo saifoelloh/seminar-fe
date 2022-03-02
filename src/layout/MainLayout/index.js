@@ -117,7 +117,7 @@ const MainLayout = ({ currentUser, checkUser, toggleSideBar }) => {
           </AppBar>
 
           {/* drawer */}
-          <Sidebar drawerOpen={leftDrawerOpened} drawerToggle={() => toggleSideBar(leftDrawerOpened)} />
+          {_.isEmpty(currentUser) ? null : <Sidebar drawerOpen={leftDrawerOpened} drawerToggle={() => toggleSideBar(leftDrawerOpened)} />}
 
           {/* main content */}
           <Main theme={theme} open={leftDrawerOpened}>

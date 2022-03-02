@@ -41,6 +41,19 @@ export const getSeminarById = (id) => async (dispatch) => {
   }
 };
 
+export const updateSeminarById = (id, data) => async (dispatch) => {
+  try {
+    const result = await fetchAPI('PATCH', { path: `${path}/${id}`, data });
+    return result;
+  } catch (error) {
+    if (error.message === 'Unauthorized') {
+      dispatch(currentUserUpdate(null));
+    }
+
+    throw error;
+  }
+};
+
 export const enrollSeminar = (id, userId) => async (dispatch) => {
   try {
     const data = await fetchAPI('POST', { path: `${path}/${id}/enroll` });
