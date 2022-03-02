@@ -1,135 +1,86 @@
-import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import * as _ from 'lodash';
+import * as cuid from 'cuid';
+import * as PropTypes from 'prop-types';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
 import { Grid, MenuItem, TextField, Typography } from '@mui/material';
-
-// third-party
-import ApexCharts from 'apexcharts';
-import Chart from 'react-apexcharts';
 
 // project imports
 import SkeletonTotalGrowthBarChart from 'ui-component/cards/Skeleton/TotalGrowthBarChart';
 import MainCard from 'ui-component/cards/MainCard';
-import { gridSpacing } from 'redux/constant';
+import ListSeminars from './ListSeminars';
+import { gridSpacing, ORDER_BY, SORT_BY } from 'redux/constant';
 
-// chart data
-import chartData from './chart-data/total-growth-bar-chart';
-
-const status = [
-  {
-    value: 'today',
-    label: 'Today'
-  },
-  {
-    value: 'month',
-    label: 'This Month'
-  },
-  {
-    value: 'year',
-    label: 'This Year'
-  }
-];
-
-// ==============================|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||============================== //
-
-const TotalGrowthBarChart = ({ isLoading }) => {
-  const [value, setValue] = useState('today');
-  const theme = useTheme();
-  const customization = useSelector((state) => state.customization);
-
-  const { navType } = customization;
-  const { primary } = theme.palette.text;
-  const darkLight = theme.palette.dark.light;
-  const grey200 = theme.palette.grey[200];
-  const grey500 = theme.palette.grey[500];
-
-  const primary200 = theme.palette.primary[200];
-  const primaryDark = theme.palette.primary.dark;
-  const secondaryMain = theme.palette.secondary.main;
-  const secondaryLight = theme.palette.secondary.light;
-
-  useEffect(() => {
-    const newChartData = {
-      ...chartData.options,
-      colors: [primary200, primaryDark, secondaryMain, secondaryLight],
-      xaxis: {
-        labels: {
-          style: {
-            colors: [primary, primary, primary, primary, primary, primary, primary, primary, primary, primary, primary, primary]
-          }
-        }
-      },
-      yaxis: {
-        labels: {
-          style: {
-            colors: [primary]
-          }
-        }
-      },
-      grid: {
-        borderColor: grey200
-      },
-      tooltip: {
-        theme: 'light'
-      },
-      legend: {
-        labels: {
-          colors: grey500
-        }
-      }
-    };
-
-    // do not load chart when loading
-    if (!isLoading) {
-      ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
-    }
-  }, [navType, primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500]);
-
-  return (
-    <>
-      {isLoading ? (
-        <SkeletonTotalGrowthBarChart />
-      ) : (
-        <MainCard>
-          <Grid container spacing={gridSpacing}>
-            <Grid item xs={12}>
-              <Grid container alignItems="center" justifyContent="space-between">
-                <Grid item>
-                  <Grid container direction="column" spacing={1}>
-                    <Grid item>
-                      <Typography variant="subtitle2">Total Growth</Typography>
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="h3">$2,324.00</Typography>
-                    </Grid>
+const TotalGrowthBarChart = ({ isLoading, seminars, page, orderBy, sortBy }) => (
+  <>
+    {isLoading ? (
+      <SkeletonTotalGrowthBarChart />
+    ) : (
+      <MainCard>
+        <Grid container spacing={gridSpacing}>
+          <Grid item xs={12}>
+            <Grid container alignItems="center" justifyContent="space-between">
+              <Grid item>
+                <Grid container direction="column" spacing={1}>
+                  <Grid item>
+                    <Typography variant="subtitle2">List Of</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="h3">Seminar</Typography>
                   </Grid>
                 </Grid>
-                <Grid item>
-                  <TextField id="standard-select-currency" select value={value} onChange={(e) => setValue(e.target.value)}>
-                    {status.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
+              </Grid>
+              <Grid item>
+                <TextField
+                  label="Order By"
+                  select
+                  value={orderBy.value}
+                  onChange={(e) => orderBy.setValue(e.target.value)}
+                  style={{ marginRight: '1em' }}
+                >
+                  {ORDER_BY.map((option) => (
+                    <MenuItem key={cuid()} value={option} style={{ textTransform: 'capitalize' }}>
+                      {option.toUpperCase()}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField label="Sort By" select value={sortBy.value} onChange={(e) => sortBy.setValue(e.target.value)}>
+                  {SORT_BY.map((option) => (
+                    <MenuItem key={cuid()} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <Chart {...chartData} />
-            </Grid>
           </Grid>
-        </MainCard>
-      )}
-    </>
-  );
-};
+          <Grid item xs={12}>
+            {_.isEmpty(seminars) ? null : <ListSeminars seminars={seminars} page={page} />}
+          </Grid>
+        </Grid>
+      </MainCard>
+    )}
+  </>
+);
 
 TotalGrowthBarChart.propTypes = {
-  isLoading: PropTypes.bool
+  isLoading: PropTypes.bool,
+  seminars: PropTypes.shape({
+    data: PropTypes.array,
+    total: PropTypes.number
+  }),
+  page: PropTypes.shape({
+    value: PropTypes.number,
+    setValue: PropTypes.func
+  }),
+  orderBy: PropTypes.shape({
+    value: PropTypes.string,
+    setValue: PropTypes.func
+  }),
+  sortBy: PropTypes.shape({
+    value: PropTypes.string,
+    setValue: PropTypes.func
+  })
 };
 
 export default TotalGrowthBarChart;
